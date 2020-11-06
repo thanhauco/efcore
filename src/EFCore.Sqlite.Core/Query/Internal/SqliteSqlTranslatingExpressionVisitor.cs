@@ -151,6 +151,30 @@ namespace Microsoft.EntityFrameworkCore.Sqlite.Query.Internal
         {
             Check.NotNull(binaryExpression, nameof(binaryExpression));
 
+            if (binaryExpression.NodeType == ExpressionType.ArrayIndex)
+            {
+                var left = Visit(binaryExpression.Left);
+                var right = Visit(binaryExpression.Right);
+
+                if (left is SqlExpression leftSql
+                    && right is SqlExpression rightSql)
+                {
+                    return Dependencies.SqlExpressionFactory.Function(
+                        "substr",
+                        new SqlExpression[]
+                        {
+                            leftSql,
+                            Dependencies.SqlExpressionFactory.Add(
+                                Dependencies.SqlExpressionFactory.ApplyDefaultTypeMapping(rightSql),
+                                Dependencies.SqlExpressionFactory.Constant(1)),
+                            Dependencies.SqlExpressionFactory.Constant(1)
+                        },
+                        nullable: true,
+                        argumentsPropagateNullability: new[] { true, true, true },
+                        binaryExpression.Type);
+                }
+            }
+
             if (!(base.VisitBinary(binaryExpression) is SqlExpression visitedExpression))
             {
                 return null;
