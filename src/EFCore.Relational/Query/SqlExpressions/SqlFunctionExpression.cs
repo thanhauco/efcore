@@ -394,9 +394,12 @@ namespace Microsoft.EntityFrameworkCore.Query.SqlExpressions
             hash.Add(IsNiladic);
             hash.Add(Schema);
             hash.Add(Instance);
-            for (var i = 0; i < Arguments.Count; i++)
+            if (Arguments != null)
             {
-                hash.Add(Arguments[i]);
+                for (var i = 0; i < Arguments.Count; i++)
+                {
+                    hash.Add(Arguments[i]);
+                }
             }
 
             return hash.ToHashCode();
