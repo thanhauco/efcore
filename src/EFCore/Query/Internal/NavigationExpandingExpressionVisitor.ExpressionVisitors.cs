@@ -132,9 +132,7 @@ namespace Microsoft.EntityFrameworkCore.Query.Internal
 
                     var skipNavigation = memberIdentity.MemberInfo != null
                         ? entityType.FindSkipNavigation(memberIdentity.MemberInfo)
-                        : memberIdentity.Name is not null
-                            ? entityType.FindSkipNavigation(memberIdentity.Name)
-                            : null;
+                        : entityType.FindSkipNavigation(memberIdentity.Name!);
                     if (skipNavigation != null)
                     {
                         return ExpandSkipNavigation(root, entityReference, skipNavigation, convertedType != null);
